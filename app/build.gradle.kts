@@ -69,4 +69,8 @@ dependencies {
 
     // splash api
     implementation(libs.androidx.core.splashscreen)
+
+    // shared preference
+    implementation(libs.androidx.preference.ktx)
+
 }

@@ -3,6 +3,8 @@ package com.rejowan.onboardingjc.onboard
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,10 +22,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxSize()) {
 
         Spacer(
-            modifier = Modifier.size(50.dp)
+            modifier = Modifier.size(90.dp)
         )
 
 
@@ -32,12 +34,12 @@ fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(50.dp, 0.dp),
+                .padding(20.dp, 0.dp),
             alignment = Alignment.Center
         )
 
         Spacer(
-            modifier = Modifier.size(50.dp)
+            modifier = Modifier.size(70.dp)
         )
 
         Text(
@@ -51,7 +53,7 @@ fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .size(10.dp)
+                .size(15.dp)
         )
 
         Text(

@@ -59,7 +59,6 @@ fun BackButton() {
         textColor = Color.Gray,
         textStyle = MaterialTheme.typography.bodySmall,
         fontSize = 13) {
-
     }
 
 
