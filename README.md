@@ -6,7 +6,7 @@
 <hr>
 
 > [!NOTE]  
-> I've full tutorial on this project on YouTube. You can check it out [here](https://www.youtube.com/@TranquillyCoding)
+> I've full tutorial on this project on YouTube. You can check it out [here](https://www.youtube.com/watch?v=AtNCGtMjavk)
 
 
 ## What is it?
@@ -15,7 +15,7 @@
 <table>
 <tr>
 <td>
-This is an example of How to create an Onboarding Screen in Jetpack Compose. This repository is created along with a Full Youtube Tutorial. You can watch the tutorial from <a href="https://www.youtube.com/@TranquillyCoding">here</a>.
+This is an example of How to create an Onboarding Screen in Jetpack Compose. This repository is created along with a Full Youtube Tutorial. You can watch the tutorial from <a href="https://www.youtube.com/watch?v=AtNCGtMjavk">here</a>.
 <br>
 The whole Project is Created with Kotlin, Jetpack Compose and Material 3. I added two extra part as well. One is the Splash Screen and another one is the Shared Preference to save the state of the Onboarding Screen.
 <img src="https://raw.githubusercontent.com/ahmmedrejowan/OnboardingScreen-JetpackCompose/master/files/work-plan.png" /> 
@@ -38,7 +38,12 @@ The whole Project is Created with Kotlin, Jetpack Compose and Material 3. I adde
 | ![Screenshot 2](https://raw.githubusercontent.com/ahmmedrejowan/OnboardingScreen-JetpackCompose/master/files/shot1.jpeg) | ![Screenshot 3](https://raw.githubusercontent.com/ahmmedrejowan/OnboardingScreen-JetpackCompose/master/files/shot2.jpeg) | ![Screenshot 4](https://raw.githubusercontent.com/ahmmedrejowan/OnboardingScreen-JetpackCompose/master/files/shot3.jpeg) |
 
 
+## Tutorial 
+Watch out the whole tutorial on Youtube.
 
+<a href="https://www.youtube.com/watch?v=AtNCGtMjavk">
+<img src="https://github.com/ahmmedrejowan/OnboardingScreen-JetpackCompose/assets/42619122/baf6f473-0a98-48a9-a981-2e489c5637a0" width="70%"/>
+</a>
 
 ## License
 
