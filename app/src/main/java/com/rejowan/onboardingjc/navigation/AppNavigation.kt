@@ -23,6 +23,22 @@ import com.rejowan.onboardingjc.onboarding.timeline.TimelineOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.verticalpager.VerticalPagerOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.videobackground.VideoBackgroundOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.zoomtransition.ZoomTransitionOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.carousel3d.Carousel3DOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.cardflip.CardFlipOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.cubetransition.CubeTransitionOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.fadecrossfade.FadeCrossfadeOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.glassmorphism.GlassmorphismOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.neumorphism.NeumorphismOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.typewriter.TypewriterOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.swipecards.SwipeCardsOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.circularreveal.CircularRevealOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.pulsating.PulsatingOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.particle.ParticleOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.liquidblob.LiquidBlobOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.storytelling.StorytellingOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.interactivequiz.InteractiveQuizOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.chatbubbles.ChatBubblesOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.rotatingwheel.RotatingWheelOnboardingScreen
 import com.rejowan.onboardingjc.success.SuccessScreen
 
 @Composable
@@ -196,6 +212,166 @@ fun AppNavigation(
                 onFinished = {
                     navController.navigate(Routes.Success("Zoom Transition Onboarding")) {
                         popUpTo<Routes.ZoomTransitionOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.Carousel3DOnboarding> {
+            Carousel3DOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("3D Carousel Onboarding")) {
+                        popUpTo<Routes.Carousel3DOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.CardFlipOnboarding> {
+            CardFlipOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Card Flip Onboarding")) {
+                        popUpTo<Routes.CardFlipOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.CubeTransitionOnboarding> {
+            CubeTransitionOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Cube Transition Onboarding")) {
+                        popUpTo<Routes.CubeTransitionOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.FadeCrossfadeOnboarding> {
+            FadeCrossfadeOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Fade Crossfade Onboarding")) {
+                        popUpTo<Routes.FadeCrossfadeOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.GlassmorphismOnboarding> {
+            GlassmorphismOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Glassmorphism Onboarding")) {
+                        popUpTo<Routes.GlassmorphismOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.NeumorphismOnboarding> {
+            NeumorphismOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Neumorphism Onboarding")) {
+                        popUpTo<Routes.NeumorphismOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.TypewriterOnboarding> {
+            TypewriterOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Typewriter Onboarding")) {
+                        popUpTo<Routes.TypewriterOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.SwipeCardsOnboarding> {
+            SwipeCardsOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Swipe Cards Onboarding")) {
+                        popUpTo<Routes.SwipeCardsOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.CircularRevealOnboarding> {
+            CircularRevealOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Circular Reveal Onboarding")) {
+                        popUpTo<Routes.CircularRevealOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.PulsatingOnboarding> {
+            PulsatingOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Pulsating Onboarding")) {
+                        popUpTo<Routes.PulsatingOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.ParticleOnboarding> {
+            ParticleOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Particle Onboarding")) {
+                        popUpTo<Routes.ParticleOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.LiquidBlobOnboarding> {
+            LiquidBlobOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Liquid Blob Onboarding")) {
+                        popUpTo<Routes.LiquidBlobOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.StorytellingOnboarding> {
+            StorytellingOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Storytelling Onboarding")) {
+                        popUpTo<Routes.StorytellingOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.InteractiveQuizOnboarding> {
+            InteractiveQuizOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Interactive Quiz Onboarding")) {
+                        popUpTo<Routes.InteractiveQuizOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.ChatBubblesOnboarding> {
+            ChatBubblesOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Chat Bubbles Onboarding")) {
+                        popUpTo<Routes.ChatBubblesOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.RotatingWheelOnboarding> {
+            RotatingWheelOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Rotating Wheel Onboarding")) {
+                        popUpTo<Routes.RotatingWheelOnboarding> { inclusive = true }
                     }
                 }
             )

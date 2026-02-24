@@ -27,6 +27,22 @@ import androidx.compose.material.icons.filled.SwipeVertical
 import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material.icons.filled.ZoomOutMap
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Flip
+import androidx.compose.material.icons.filled.ViewInAr
+import androidx.compose.material.icons.filled.BlurOn
+import androidx.compose.material.icons.filled.Lens
+import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.material.icons.filled.Keyboard
+import androidx.compose.material.icons.filled.SwipeRight
+import androidx.compose.material.icons.filled.Adjust
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Celebration
+import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.AutoStories
+import androidx.compose.material.icons.filled.Quiz
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.RotateRight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -203,6 +219,166 @@ fun HomeScreen(
                 hasTutorial = false,
                 tutorialUrl = null,
                 route = Routes.ZoomTransitionOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "carousel_3d",
+                name = "3D Carousel",
+                description = "Cards rotate in 3D space with perspective",
+                icon = Icons.Default.Public,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.Carousel3DOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "card_flip",
+                name = "Card Flip",
+                description = "Pages flip like a book with 3D rotation",
+                icon = Icons.Default.Flip,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.CardFlipOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "cube_transition",
+                name = "Cube Transition",
+                description = "3D cube rotation between pages",
+                icon = Icons.Default.ViewInAr,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.CubeTransitionOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "fade_crossfade",
+                name = "Fade Crossfade",
+                description = "Smooth crossfade transitions between pages",
+                icon = Icons.Default.BlurOn,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.FadeCrossfadeOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "glassmorphism",
+                name = "Glassmorphism",
+                description = "Frosted glass effect UI with blur",
+                icon = Icons.Default.Lens,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.GlassmorphismOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "neumorphism",
+                name = "Neumorphism",
+                description = "Soft UI with inset/outset shadows",
+                icon = Icons.Default.TouchApp,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.NeumorphismOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "typewriter",
+                name = "Typewriter",
+                description = "Text typing animation effect",
+                icon = Icons.Default.Keyboard,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.TypewriterOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "swipe_cards",
+                name = "Swipe Cards",
+                description = "Tinder-style swipe left/right cards",
+                icon = Icons.Default.SwipeRight,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.SwipeCardsOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "circular_reveal",
+                name = "Circular Reveal",
+                description = "Content reveals in circular motion",
+                icon = Icons.Default.Adjust,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.CircularRevealOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "pulsating",
+                name = "Pulsating",
+                description = "Elements pulse and breathe with life",
+                icon = Icons.Default.FavoriteBorder,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.PulsatingOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "particle",
+                name = "Particle",
+                description = "Floating particles create magical atmosphere",
+                icon = Icons.Default.Celebration,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.ParticleOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "liquid_blob",
+                name = "Liquid Blob",
+                description = "Liquid blob shape transitions",
+                icon = Icons.Default.WaterDrop,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.LiquidBlobOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "storytelling",
+                name = "Storytelling",
+                description = "Chapter-based narrative flow",
+                icon = Icons.Default.AutoStories,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.StorytellingOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "interactive_quiz",
+                name = "Interactive Quiz",
+                description = "Questions during onboarding",
+                icon = Icons.Default.Quiz,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.InteractiveQuizOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "chat_bubbles",
+                name = "Chat Bubbles",
+                description = "Conversational chat-style intro",
+                icon = Icons.Default.Chat,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.ChatBubblesOnboarding,
+                isImplemented = true
+            ),
+            OnboardingVariation(
+                id = "rotating_wheel",
+                name = "Rotating Wheel",
+                description = "Wheel/dial page selector",
+                icon = Icons.Default.RotateRight,
+                hasTutorial = false,
+                tutorialUrl = null,
+                route = Routes.RotatingWheelOnboarding,
                 isImplemented = true
             )
         )
