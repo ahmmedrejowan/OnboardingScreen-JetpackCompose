@@ -93,7 +93,7 @@ fun HomeScreen(
                 hasTutorial = false,
                 tutorialUrl = null,
                 route = Routes.VerticalPagerOnboarding,
-                isImplemented = false
+                isImplemented = true
             ),
             OnboardingVariation(
                 id = "parallax",
