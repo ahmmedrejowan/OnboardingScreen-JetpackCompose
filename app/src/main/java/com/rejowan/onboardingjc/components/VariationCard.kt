@@ -1,6 +1,5 @@
 package com.rejowan.onboardingjc.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,10 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,16 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rejowan.onboardingjc.R
 import com.rejowan.onboardingjc.home.OnboardingVariation
 import com.rejowan.onboardingjc.navigation.Routes
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VariationCard(
     variation: OnboardingVariation,
@@ -54,32 +49,28 @@ fun VariationCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Preview image
-            Box {
-                Image(
-                    painter = painterResource(id = variation.previewImage),
+            // Icon container
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .background(
+                        color = if (variation.isImplemented)
+                            MaterialTheme.colorScheme.primaryContainer
+                        else
+                            MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(12.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = variation.icon,
                     contentDescription = variation.name,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
+                    modifier = Modifier.size(28.dp),
+                    tint = if (variation.isImplemented)
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant
                 )
-
-                if (!variation.isImplemented) {
-                    Box(
-                        modifier = Modifier
-                            .size(80.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Soon",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -158,10 +149,10 @@ fun VariationCardPreview() {
             id = "classic",
             name = "Classic Onboarding",
             description = "A simple horizontal pager with dots indicator",
-            previewImage = R.drawable.img_into_1,
+            icon = Icons.AutoMirrored.Filled.ViewList,
             hasTutorial = true,
             tutorialUrl = null,
-            route = Routes.ClassicOnboarding.route
+            route = Routes.ClassicOnboarding
         ),
         onClick = {}
     )
@@ -175,10 +166,10 @@ fun VariationCardComingSoonPreview() {
             id = "fullscreen",
             name = "Fullscreen Onboarding",
             description = "Full-bleed background images with gradient overlay",
-            previewImage = R.drawable.img_into_2,
+            icon = Icons.Default.Fullscreen,
             hasTutorial = false,
             tutorialUrl = null,
-            route = Routes.FullscreenOnboarding.route,
+            route = Routes.FullscreenOnboarding,
             isImplemented = false
         ),
         onClick = {}

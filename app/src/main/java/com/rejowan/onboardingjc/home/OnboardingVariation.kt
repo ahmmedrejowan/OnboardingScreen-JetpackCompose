@@ -1,14 +1,15 @@
 package com.rejowan.onboardingjc.home
 
-import androidx.annotation.DrawableRes
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.rejowan.onboardingjc.navigation.Routes
 
 data class OnboardingVariation(
     val id: String,
     val name: String,
     val description: String,
-    @DrawableRes val previewImage: Int,
+    val icon: ImageVector,
     val hasTutorial: Boolean,
     val tutorialUrl: String?,
-    val route: String,
+    val route: Routes,
     val isImplemented: Boolean = true
 )

@@ -2,11 +2,10 @@ package com.rejowan.onboardingjc.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.rejowan.onboardingjc.home.HomeScreen
 import com.rejowan.onboardingjc.onboarding.classic.ClassicOnboardingScreen
 import com.rejowan.onboardingjc.success.SuccessScreen
@@ -17,9 +16,9 @@ fun AppNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Routes.Home.route
+        startDestination = Routes.Home
     ) {
-        composable(Routes.Home.route) {
+        composable<Routes.Home> {
             HomeScreen(
                 onVariationClick = { route ->
                     navController.navigate(route)
@@ -27,28 +26,23 @@ fun AppNavigation(
             )
         }
 
-        composable(Routes.ClassicOnboarding.route) {
+        composable<Routes.ClassicOnboarding> {
             ClassicOnboardingScreen(
                 onFinished = {
-                    navController.navigate(Routes.Success.createRoute("Classic Onboarding")) {
-                        popUpTo(Routes.ClassicOnboarding.route) { inclusive = true }
+                    navController.navigate(Routes.Success("Classic Onboarding")) {
+                        popUpTo<Routes.ClassicOnboarding> { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(
-            route = Routes.Success.route,
-            arguments = listOf(
-                navArgument("onboardingName") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val onboardingName = backStackEntry.arguments?.getString("onboardingName") ?: ""
+        composable<Routes.Success> { backStackEntry ->
+            val success: Routes.Success = backStackEntry.toRoute()
             SuccessScreen(
-                onboardingName = onboardingName,
+                onboardingName = success.onboardingName,
                 onGoHome = {
-                    navController.navigate(Routes.Home.route) {
-                        popUpTo(Routes.Home.route) { inclusive = true }
+                    navController.navigate(Routes.Home) {
+                        popUpTo<Routes.Home> { inclusive = true }
                     }
                 }
             )
