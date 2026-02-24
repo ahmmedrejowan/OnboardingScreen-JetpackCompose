@@ -9,5 +9,6 @@ data class OnboardingVariation(
     @DrawableRes val previewImage: Int,
     val hasTutorial: Boolean,
     val tutorialUrl: String?,
-    val route: String
+    val route: String,
+    val isImplemented: Boolean = true
 )

@@ -18,18 +18,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rejowan.onboardingjc.settings.SettingsManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ClassicOnboardingScreen(onFinished: () -> Unit) {
-
-    val context = LocalContext.current
-    val settingsManager = remember { SettingsManager(context) }
 
     val pages = listOf(
         ClassicOnboardingModel.FirstPage,
@@ -100,7 +95,6 @@ fun ClassicOnboardingScreen(onFinished: () -> Unit) {
                         if (pagerState.currentPage < pages.size - 1) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         } else {
-                            settingsManager.setOnboardingCompleted("classic")
                             onFinished()
                         }
                     }
