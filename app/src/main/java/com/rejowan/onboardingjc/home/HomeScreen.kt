@@ -113,7 +113,7 @@ fun HomeScreen(
                 hasTutorial = false,
                 tutorialUrl = null,
                 route = Routes.CardStackOnboarding,
-                isImplemented = false
+                isImplemented = true
             ),
             OnboardingVariation(
                 id = "bottom_sheet",

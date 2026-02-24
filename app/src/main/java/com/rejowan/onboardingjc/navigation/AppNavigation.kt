@@ -10,6 +10,7 @@ import com.rejowan.onboardingjc.home.HomeScreen
 import com.rejowan.onboardingjc.onboarding.classic.ClassicOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.fullscreen.FullscreenOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.animated.AnimatedOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.cardstack.CardStackOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.minimalist.MinimalistOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.parallax.ParallaxOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.verticalpager.VerticalPagerOnboardingScreen
@@ -86,6 +87,16 @@ fun AppNavigation(
                 onFinished = {
                     navController.navigate(Routes.Success("Parallax Onboarding")) {
                         popUpTo<Routes.ParallaxOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.CardStackOnboarding> {
+            CardStackOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Card Stack Onboarding")) {
+                        popUpTo<Routes.CardStackOnboarding> { inclusive = true }
                     }
                 }
             )
