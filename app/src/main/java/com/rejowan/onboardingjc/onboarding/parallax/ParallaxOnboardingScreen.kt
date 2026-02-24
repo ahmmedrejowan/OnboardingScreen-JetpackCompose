@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,17 +26,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import com.rejowan.onboardingjc.R
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -75,100 +73,6 @@ fun ParallaxOnboardingScreen(onFinished: () -> Unit) {
         color = MaterialTheme.colorScheme.background
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Parallax Pager
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize()
-            ) { pageIndex ->
-                val pageOffset = (pagerState.currentPage - pageIndex) + pagerState.currentPageOffsetFraction
-
-                Box(modifier = Modifier.fillMaxSize()) {
-                    // Background layer - moves slower (parallax effect)
-                    Image(
-                        painter = painterResource(id = pages[pageIndex].image),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer {
-                                // Parallax effect: background moves at 0.5x speed
-                                translationX = size.width * pageOffset * 0.5f
-                            }
-                            .scale(1.2f),
-                        contentScale = ContentScale.Crop
-                    )
-
-                    // Overlay gradient
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                MaterialTheme.colorScheme.background.copy(alpha = 0.7f)
-                            )
-                    )
-
-                    // Foreground image - moves faster
-                    Image(
-                        painter = painterResource(id = pages[pageIndex].image),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .align(Alignment.Center)
-                            .offset {
-                                // Foreground moves at 1.5x speed for parallax depth
-                                IntOffset(
-                                    x = (300.dp.toPx() * pageOffset).toInt(),
-                                    y = 0
-                                )
-                            }
-                            .alpha(1f - pageOffset.absoluteValue.coerceIn(0f, 1f) * 0.5f),
-                        contentScale = ContentScale.Fit
-                    )
-
-                    // Content layer - text moves at normal speed
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Bottom
-                    ) {
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        // Title with parallax
-                        Text(
-                            text = pages[pageIndex].title,
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .graphicsLayer {
-                                    translationX = size.width * pageOffset * 0.3f
-                                    alpha = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
-                                }
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Description with different parallax
-                        Text(
-                            text = pages[pageIndex].description,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .padding(horizontal = 24.dp)
-                                .graphicsLayer {
-                                    translationX = size.width * pageOffset * 0.2f
-                                    alpha = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
-                                }
-                        )
-
-                        Spacer(modifier = Modifier.height(120.dp))
-                    }
-                }
-            }
-
             // Skip button
             TextButton(
                 onClick = onFinished,
@@ -179,14 +83,30 @@ fun ParallaxOnboardingScreen(onFinished: () -> Unit) {
                 Text("Skip")
             }
 
-            // Bottom controls
             Column(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(48.dp))
+
+                // Pager with parallax effect
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                ) { pageIndex ->
+                    ParallaxPageContent(
+                        page = pages[pageIndex],
+                        pagerState = pagerState,
+                        pageIndex = pageIndex
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
                 // Indicators
                 Row(
                     horizontalArrangement = Arrangement.Center
@@ -230,8 +150,101 @@ fun ParallaxOnboardingScreen(onFinished: () -> Unit) {
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
+    }
+}
+
+@Composable
+private fun ParallaxPageContent(
+    page: ParallaxPage,
+    pagerState: PagerState,
+    pageIndex: Int
+) {
+    // Calculate the offset for parallax
+    val pageOffset = (pagerState.currentPage - pageIndex) + pagerState.currentPageOffsetFraction
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Image with parallax effect
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .clip(RoundedCornerShape(24.dp))
+        ) {
+            Image(
+                painter = painterResource(id = page.image),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        // Parallax: image moves slower than the page scroll
+                        translationX = size.width * pageOffset * 0.4f
+
+                        // Scale and alpha based on distance from center
+                        val scale = lerp(
+                            start = 0.85f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
+                        )
+                        scaleX = scale
+                        scaleY = scale
+
+                        alpha = lerp(
+                            start = 0.5f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
+                        )
+                    },
+                contentScale = ContentScale.Crop
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Title with different parallax speed
+        Text(
+            text = page.title,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.graphicsLayer {
+                // Text moves faster than image (opposite parallax)
+                translationX = size.width * pageOffset * -0.2f
+                alpha = lerp(
+                    start = 0f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Description with yet another parallax speed
+        Text(
+            text = page.description,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .graphicsLayer {
+                    // Description moves even faster
+                    translationX = size.width * pageOffset * -0.3f
+                    alpha = lerp(
+                        start = 0f,
+                        stop = 1f,
+                        fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
+                    )
+                }
+        )
     }
 }
 

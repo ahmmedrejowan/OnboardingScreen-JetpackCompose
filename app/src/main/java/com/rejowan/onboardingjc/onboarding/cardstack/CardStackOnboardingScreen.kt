@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,14 +35,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.rejowan.onboardingjc.R
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 data class CardStackPage(
     val image: Int,
@@ -53,7 +60,7 @@ private val pages = listOf(
     CardStackPage(
         image = R.drawable.img_into_1,
         title = "Stacked Cards",
-        description = "Each card reveals the next one as you progress through the onboarding",
+        description = "Swipe left or tap Next to see the next card",
         cardColor = 0xFFE3F2FD
     ),
     CardStackPage(
@@ -73,6 +80,13 @@ private val pages = listOf(
 @Composable
 fun CardStackOnboardingScreen(onFinished: () -> Unit) {
     var currentPage by remember { mutableIntStateOf(0) }
+    var dragOffsetX by remember { mutableFloatStateOf(0f) }
+
+    val animatedDragOffset by animateFloatAsState(
+        targetValue = dragOffsetX,
+        animationSpec = tween(if (dragOffsetX == 0f) 300 else 0),
+        label = "dragOffset"
+    )
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -103,13 +117,16 @@ fun CardStackOnboardingScreen(onFinished: () -> Unit) {
                     val isPast = index < currentPage
 
                     if (!isPast) {
+                        val stackOffset = if (isBehind) (index - currentPage) * 20f else 0f
+                        val stackScale = if (isBehind) 1f - (index - currentPage) * 0.05f else 1f
+
                         val offsetY by animateFloatAsState(
-                            targetValue = if (isBehind) (index - currentPage) * 20f else 0f,
+                            targetValue = stackOffset,
                             animationSpec = tween(300),
                             label = "offsetY"
                         )
                         val scale by animateFloatAsState(
-                            targetValue = if (isBehind) 1f - (index - currentPage) * 0.05f else 1f,
+                            targetValue = stackScale,
                             animationSpec = tween(300),
                             label = "scale"
                         )
@@ -117,17 +134,50 @@ fun CardStackOnboardingScreen(onFinished: () -> Unit) {
                         Card(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .offset(y = offsetY.dp)
+                                .offset {
+                                    IntOffset(
+                                        x = if (isCurrentCard) animatedDragOffset.roundToInt() else 0,
+                                        y = offsetY.dp.roundToPx()
+                                    )
+                                }
                                 .scale(scale)
                                 .graphicsLayer {
                                     alpha = if (isBehind) 0.7f else 1f
-                                },
+                                    if (isCurrentCard) {
+                                        rotationZ = animatedDragOffset / 50f
+                                    }
+                                }
+                                .then(
+                                    if (isCurrentCard) {
+                                        Modifier.pointerInput(currentPage) {
+                                            detectHorizontalDragGestures(
+                                                onDragEnd = {
+                                                    when {
+                                                        dragOffsetX < -150f && currentPage < pages.size - 1 -> {
+                                                            currentPage++
+                                                        }
+                                                        dragOffsetX > 150f && currentPage > 0 -> {
+                                                            currentPage--
+                                                        }
+                                                    }
+                                                    dragOffsetX = 0f
+                                                },
+                                                onDragCancel = {
+                                                    dragOffsetX = 0f
+                                                },
+                                                onHorizontalDrag = { _, dragAmount ->
+                                                    dragOffsetX += dragAmount
+                                                }
+                                            )
+                                        }
+                                    } else Modifier
+                                ),
                             shape = RoundedCornerShape(24.dp),
                             elevation = CardDefaults.cardElevation(
                                 defaultElevation = if (isCurrentCard) 8.dp else 2.dp
                             ),
                             colors = CardDefaults.cardColors(
-                                containerColor = androidx.compose.ui.graphics.Color(pages[index].cardColor)
+                                containerColor = Color(pages[index].cardColor)
                             )
                         ) {
                             Column(

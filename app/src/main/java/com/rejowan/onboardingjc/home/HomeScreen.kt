@@ -1,5 +1,7 @@
 package com.rejowan.onboardingjc.home
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,47 +11,66 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.filled.Adjust
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.AutoStories
+import androidx.compose.material.icons.filled.BlurOn
+import androidx.compose.material.icons.filled.Celebration
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DragHandle
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FilterNone
+import androidx.compose.material.icons.filled.Flip
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Gradient
+import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Lens
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Quiz
+import androidx.compose.material.icons.filled.RotateRight
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SlowMotionVideo
+import androidx.compose.material.icons.filled.SwipeRight
 import androidx.compose.material.icons.filled.SwipeUp
 import androidx.compose.material.icons.filled.SwipeVertical
 import androidx.compose.material.icons.filled.Timeline
-import androidx.compose.material.icons.filled.ViewAgenda
-import androidx.compose.material.icons.filled.ZoomOutMap
-import androidx.compose.material.icons.filled.Public
-import androidx.compose.material.icons.filled.Flip
-import androidx.compose.material.icons.filled.ViewInAr
-import androidx.compose.material.icons.filled.BlurOn
-import androidx.compose.material.icons.filled.Lens
 import androidx.compose.material.icons.filled.TouchApp
-import androidx.compose.material.icons.filled.Keyboard
-import androidx.compose.material.icons.filled.SwipeRight
-import androidx.compose.material.icons.filled.Adjust
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Celebration
+import androidx.compose.material.icons.filled.ViewAgenda
+import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material.icons.filled.WaterDrop
-import androidx.compose.material.icons.filled.AutoStories
-import androidx.compose.material.icons.filled.Quiz
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.RotateRight
+import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rejowan.onboardingjc.components.VariationCard
@@ -57,8 +78,13 @@ import com.rejowan.onboardingjc.navigation.Routes
 
 @Composable
 fun HomeScreen(
-    onVariationClick: (Routes) -> Unit
+    onVariationClick: (Routes) -> Unit,
+    listState: LazyListState = rememberLazyListState()
 ) {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+
     val variations = remember {
         listOf(
             OnboardingVariation(
@@ -384,11 +410,31 @@ fun HomeScreen(
         )
     }
 
+    val filteredVariations by remember(searchQuery) {
+        derivedStateOf {
+            if (searchQuery.isBlank()) {
+                variations
+            } else {
+                variations.filter {
+                    it.name.contains(searchQuery, ignoreCase = true) ||
+                            it.description.contains(searchQuery, ignoreCase = true)
+                }
+            }
+        }
+    }
+
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) {
+                    focusManager.clearFocus()
+                    keyboardController?.hide()
+                }
         ) {
             // Header
             Column(
@@ -407,22 +453,92 @@ fun HomeScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Search bar
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text("Search variations...") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search"
+                        )
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(
+                                onClick = {
+                                    searchQuery = ""
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "Clear"
+                                )
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            focusManager.clearFocus()
+                            keyboardController?.hide()
+                        }
+                    )
+                )
             }
 
             HorizontalDivider()
 
             // Variations list
-            LazyColumn(
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(variations) { variation ->
-                    VariationCard(
-                        variation = variation,
-                        onClick = {
-                            onVariationClick(variation.route)
-                        }
+            if (filteredVariations.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "No variations found",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Try a different search term",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            } else {
+                LazyColumn(
+                    state = listState,
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(filteredVariations, key = { it.id }) { variation ->
+                        VariationCard(
+                            variation = variation,
+                            onClick = {
+                                focusManager.clearFocus()
+                                keyboardController?.hide()
+                                onVariationClick(variation.route)
+                            }
+                        )
+                    }
                 }
             }
         }

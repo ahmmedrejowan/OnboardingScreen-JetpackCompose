@@ -1,6 +1,6 @@
 package com.rejowan.onboardingjc.onboarding.cubetransition
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 data class CubePage(
     val icon: ImageVector,
@@ -74,17 +76,29 @@ private val pages = listOf(
 fun CubeTransitionOnboardingScreen(onFinished: () -> Unit) {
     var currentPage by remember { mutableIntStateOf(0) }
     var isAnimating by remember { mutableStateOf(false) }
-    var targetPage by remember { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
 
-    val rotationY by animateFloatAsState(
-        targetValue = targetPage * -90f,
-        animationSpec = tween(600),
-        finishedListener = {
+    // Animation progress: 0 = showing current, 1 = showing next/prev
+    val animationProgress = remember { Animatable(0f) }
+    var animationDirection by remember { mutableIntStateOf(0) } // 1 = forward, -1 = backward
+
+    fun animateToPage(targetPage: Int) {
+        if (isAnimating) return
+        if (targetPage < 0 || targetPage >= pages.size) return
+
+        isAnimating = true
+        animationDirection = if (targetPage > currentPage) 1 else -1
+
+        scope.launch {
+            animationProgress.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(500)
+            )
             currentPage = targetPage
+            animationProgress.snapTo(0f)
             isAnimating = false
-        },
-        label = "cubeRotation"
-    )
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -116,19 +130,43 @@ fun CubeTransitionOnboardingScreen(onFinished: () -> Unit) {
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(280.dp, 350.dp)
-                            .graphicsLayer {
-                                this.rotationY = rotationY
-                                cameraDistance = 8f * density
-                            }
-                    ) {
-                        // Current face
-                        CubeFace(
-                            page = pages[currentPage],
-                            modifier = Modifier.fillMaxSize()
-                        )
+                    val progress = animationProgress.value
+                    val nextPage = (currentPage + animationDirection).coerceIn(0, pages.size - 1)
+
+                    // Outgoing face (current page rotating away)
+                    if (progress < 1f) {
+                        Box(
+                            modifier = Modifier
+                                .size(280.dp, 350.dp)
+                                .graphicsLayer {
+                                    cameraDistance = 12f * density
+                                    rotationY = progress * 90f * animationDirection
+                                    alpha = 1f - progress
+                                }
+                        ) {
+                            CubeFace(
+                                page = pages[currentPage],
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
+
+                    // Incoming face (next page rotating in)
+                    if (progress > 0f && animationDirection != 0) {
+                        Box(
+                            modifier = Modifier
+                                .size(280.dp, 350.dp)
+                                .graphicsLayer {
+                                    cameraDistance = 12f * density
+                                    rotationY = (1f - progress) * -90f * animationDirection
+                                    alpha = progress
+                                }
+                        ) {
+                            CubeFace(
+                                page = pages[nextPage],
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
                     }
                 }
 
@@ -184,12 +222,7 @@ fun CubeTransitionOnboardingScreen(onFinished: () -> Unit) {
                 ) {
                     if (currentPage > 0) {
                         TextButton(
-                            onClick = {
-                                if (!isAnimating) {
-                                    isAnimating = true
-                                    targetPage = currentPage - 1
-                                }
-                            }
+                            onClick = { animateToPage(currentPage - 1) }
                         ) {
                             Text("Back")
                         }
@@ -200,10 +233,7 @@ fun CubeTransitionOnboardingScreen(onFinished: () -> Unit) {
                     Button(
                         onClick = {
                             if (currentPage < pages.size - 1) {
-                                if (!isAnimating) {
-                                    isAnimating = true
-                                    targetPage = currentPage + 1
-                                }
+                                animateToPage(currentPage + 1)
                             } else {
                                 onFinished()
                             }

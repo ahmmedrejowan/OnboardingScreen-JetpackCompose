@@ -1,5 +1,6 @@
 package com.rejowan.onboardingjc.navigation
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -45,6 +46,9 @@ import com.rejowan.onboardingjc.success.SuccessScreen
 fun AppNavigation(
     navController: NavHostController = rememberNavController()
 ) {
+    // Remember list state at this level to preserve scroll position
+    val homeListState = rememberLazyListState()
+
     NavHost(
         navController = navController,
         startDestination = Routes.Home
@@ -53,7 +57,8 @@ fun AppNavigation(
             HomeScreen(
                 onVariationClick = { route ->
                     navController.navigate(route)
-                }
+                },
+                listState = homeListState
             )
         }
 
