@@ -9,6 +9,7 @@ import androidx.navigation.toRoute
 import com.rejowan.onboardingjc.home.HomeScreen
 import com.rejowan.onboardingjc.onboarding.classic.ClassicOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.fullscreen.FullscreenOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.animated.AnimatedOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.minimalist.MinimalistOnboardingScreen
 import com.rejowan.onboardingjc.success.SuccessScreen
 
@@ -53,6 +54,16 @@ fun AppNavigation(
                 onFinished = {
                     navController.navigate(Routes.Success("Minimalist Onboarding")) {
                         popUpTo<Routes.MinimalistOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.AnimatedOnboarding> {
+            AnimatedOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Animated Onboarding")) {
+                        popUpTo<Routes.AnimatedOnboarding> { inclusive = true }
                     }
                 }
             )
