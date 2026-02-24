@@ -73,4 +73,7 @@ dependencies {
     // shared preference
     implementation(libs.androidx.preference.ktx)
 
+    // navigation
+    implementation(libs.androidx.navigation.compose)
+
 }

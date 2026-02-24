@@ -1,4 +1,4 @@
-package com.rejowan.onboardingjc.onboard
+package com.rejowan.onboardingjc.onboarding.classic
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -28,38 +28,26 @@ fun ButtonUi(
         ), shape = RoundedCornerShape(10.dp)
     ) {
 
-
         Text(
             text = text, fontSize = fontSize.sp, style = textStyle
         )
-
-
     }
-
-
 }
-
 
 @Preview
 @Composable
 fun NextButton() {
-
-    ButtonUi (text = "Next") {
-
-    }
-
+    ButtonUi(text = "Next") {}
 }
 
 @Preview
 @Composable
 fun BackButton() {
-
-    ButtonUi(text = "Back",
+    ButtonUi(
+        text = "Back",
         backgroundColor = Color.Transparent,
         textColor = Color.Gray,
         textStyle = MaterialTheme.typography.bodySmall,
-        fontSize = 13) {
-    }
-
-
+        fontSize = 13
+    ) {}
 }

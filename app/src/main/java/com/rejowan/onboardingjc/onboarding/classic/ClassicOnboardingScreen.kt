@@ -1,4 +1,4 @@
-package com.rejowan.onboardingjc.onboard
+package com.rejowan.onboardingjc.onboarding.classic
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -18,16 +18,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.rejowan.onboardingjc.settings.SettingsManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OnboardingScreen(onFinished: () -> Unit) {
+fun ClassicOnboardingScreen(onFinished: () -> Unit) {
+
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager(context) }
 
     val pages = listOf(
-        OnboardingModel.FirstPage, OnboardingModel.SecondPage, OnboardingModel.ThirdPages
+        ClassicOnboardingModel.FirstPage,
+        ClassicOnboardingModel.SecondPage,
+        ClassicOnboardingModel.ThirdPages
     )
 
     val pagerState = rememberPagerState(initialPage = 0) {
@@ -55,11 +62,16 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Box(modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.CenterStart) { if (buttonState.value[0].isNotEmpty()) {
-                    ButtonUi (text = buttonState.value[0],
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                if (buttonState.value[0].isNotEmpty()) {
+                    ButtonUi(
+                        text = buttonState.value[0],
                         backgroundColor = Color.Transparent,
-                        textColor = Color.Gray) {
+                        textColor = Color.Gray
+                    ) {
                         scope.launch {
                             if (pagerState.currentPage > 0) {
                                 pagerState.animateScrollToPage(pagerState.currentPage - 1)
@@ -68,42 +80,44 @@ fun OnboardingScreen(onFinished: () -> Unit) {
                     }
                 }
             }
-            Box(modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
                 IndicatorUI(pageSize = pages.size, currentPage = pagerState.currentPage)
             }
 
-            Box(modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.CenterEnd) {
-                ButtonUi (text = buttonState.value[1],
+            Box(
+                modifier = Modifier.weight(1f),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                ButtonUi(
+                    text = buttonState.value[1],
                     backgroundColor = MaterialTheme.colorScheme.primary,
-                    textColor = MaterialTheme.colorScheme.onPrimary) {
+                    textColor = MaterialTheme.colorScheme.onPrimary
+                ) {
                     scope.launch {
                         if (pagerState.currentPage < pages.size - 1) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         } else {
+                            settingsManager.setOnboardingCompleted("classic")
                             onFinished()
                         }
                     }
                 }
             }
-
         }
     }, content = {
         Column(Modifier.padding(it)) {
             HorizontalPager(state = pagerState) { index ->
-                OnboardingGraphUI(onboardingModel = pages[index])
+                ClassicOnboardingGraphUI(onboardingModel = pages[index])
             }
         }
     })
-
-
 }
 
 @Preview(showBackground = true)
 @Composable
-fun OnboardingScreenPreview() {
-    OnboardingScreen {
-
-    }
+fun ClassicOnboardingScreenPreview() {
+    ClassicOnboardingScreen {}
 }

@@ -1,10 +1,9 @@
-package com.rejowan.onboardingjc.onboard
+package com.rejowan.onboardingjc.onboarding.classic
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,12 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
+fun ClassicOnboardingGraphUI(onboardingModel: ClassicOnboardingModel) {
 
-    Column(modifier = Modifier.fillMaxSize(),
+    Column(
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-
+        verticalArrangement = Arrangement.Center
+    ) {
 
         Image(
             painter = painterResource(id = onboardingModel.image),
@@ -71,27 +71,23 @@ fun OnboardingGraphUI(onboardingModel: OnboardingModel) {
                 .fillMaxWidth()
                 .size(60.dp)
         )
-
     }
-
-
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun OnboardingGraphUIPreview1() {
-    OnboardingGraphUI(OnboardingModel.FirstPage)
 }
 
 @Preview(showBackground = true)
 @Composable
-fun OnboardingGraphUIPreview2() {
-    OnboardingGraphUI(OnboardingModel.SecondPage)
+fun ClassicOnboardingGraphUIPreview1() {
+    ClassicOnboardingGraphUI(ClassicOnboardingModel.FirstPage)
 }
 
 @Preview(showBackground = true)
 @Composable
-fun OnboardingGraphUIPreview3() {
-    OnboardingGraphUI(OnboardingModel.ThirdPages)
+fun ClassicOnboardingGraphUIPreview2() {
+    ClassicOnboardingGraphUI(ClassicOnboardingModel.SecondPage)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ClassicOnboardingGraphUIPreview3() {
+    ClassicOnboardingGraphUI(ClassicOnboardingModel.ThirdPages)
 }
