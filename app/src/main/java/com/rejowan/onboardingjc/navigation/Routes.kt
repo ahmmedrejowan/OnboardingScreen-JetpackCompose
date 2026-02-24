@@ -6,6 +6,9 @@ sealed interface Routes {
     @Serializable
     data object Home : Routes
 
+    @Serializable
+    data object Settings : Routes
+
     // Onboarding variations
     @Serializable
     data object ClassicOnboarding : Routes

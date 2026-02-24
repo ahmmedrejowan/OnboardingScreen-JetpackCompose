@@ -7,7 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.rejowan.onboardingjc.data.preferences.ThemePreferences
 import com.rejowan.onboardingjc.home.HomeScreen
+import com.rejowan.onboardingjc.settings.SettingsScreen
 import com.rejowan.onboardingjc.onboarding.animated.AnimatedOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.bottomsheet.BottomSheetOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.cardstack.CardStackOnboardingScreen
@@ -44,7 +46,8 @@ import com.rejowan.onboardingjc.success.SuccessScreen
 
 @Composable
 fun AppNavigation(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    themePreferences: ThemePreferences
 ) {
     // Remember list state at this level to preserve scroll position
     val homeListState = rememberLazyListState()
@@ -58,7 +61,17 @@ fun AppNavigation(
                 onVariationClick = { route ->
                     navController.navigate(route)
                 },
+                onSettingsClick = {
+                    navController.navigate(Routes.Settings)
+                },
                 listState = homeListState
+            )
+        }
+
+        composable<Routes.Settings> {
+            SettingsScreen(
+                onBackClick = { navController.popBackStack() },
+                themePreferences = themePreferences
             )
         }
 
