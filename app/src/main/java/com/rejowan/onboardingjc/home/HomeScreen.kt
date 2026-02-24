@@ -73,7 +73,7 @@ fun HomeScreen(
                 hasTutorial = false,
                 tutorialUrl = null,
                 route = Routes.MinimalistOnboarding,
-                isImplemented = false
+                isImplemented = true
             ),
             OnboardingVariation(
                 id = "animated",
