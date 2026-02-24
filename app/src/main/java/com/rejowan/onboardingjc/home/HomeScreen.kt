@@ -103,7 +103,7 @@ fun HomeScreen(
                 hasTutorial = false,
                 tutorialUrl = null,
                 route = Routes.ParallaxOnboarding,
-                isImplemented = false
+                isImplemented = true
             ),
             OnboardingVariation(
                 id = "card_stack",

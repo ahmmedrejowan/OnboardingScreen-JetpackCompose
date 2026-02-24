@@ -11,6 +11,7 @@ import com.rejowan.onboardingjc.onboarding.classic.ClassicOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.fullscreen.FullscreenOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.animated.AnimatedOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.minimalist.MinimalistOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.parallax.ParallaxOnboardingScreen
 import com.rejowan.onboardingjc.onboarding.verticalpager.VerticalPagerOnboardingScreen
 import com.rejowan.onboardingjc.success.SuccessScreen
 
@@ -75,6 +76,16 @@ fun AppNavigation(
                 onFinished = {
                     navController.navigate(Routes.Success("Vertical Pager Onboarding")) {
                         popUpTo<Routes.VerticalPagerOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.ParallaxOnboarding> {
+            ParallaxOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Parallax Onboarding")) {
+                        popUpTo<Routes.ParallaxOnboarding> { inclusive = true }
                     }
                 }
             )
