@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.rejowan.onboardingjc.home.HomeScreen
 import com.rejowan.onboardingjc.onboarding.classic.ClassicOnboardingScreen
+import com.rejowan.onboardingjc.onboarding.fullscreen.FullscreenOnboardingScreen
 import com.rejowan.onboardingjc.success.SuccessScreen
 
 @Composable
@@ -31,6 +32,16 @@ fun AppNavigation(
                 onFinished = {
                     navController.navigate(Routes.Success("Classic Onboarding")) {
                         popUpTo<Routes.ClassicOnboarding> { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable<Routes.FullscreenOnboarding> {
+            FullscreenOnboardingScreen(
+                onFinished = {
+                    navController.navigate(Routes.Success("Fullscreen Onboarding")) {
+                        popUpTo<Routes.FullscreenOnboarding> { inclusive = true }
                     }
                 }
             )

@@ -63,7 +63,7 @@ fun HomeScreen(
                 hasTutorial = false,
                 tutorialUrl = null,
                 route = Routes.FullscreenOnboarding,
-                isImplemented = false
+                isImplemented = true
             ),
             OnboardingVariation(
                 id = "minimalist",
