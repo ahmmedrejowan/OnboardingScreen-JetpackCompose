@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -84,7 +84,7 @@ fun ChatBubblesOnboardingScreen(onFinished: () -> Unit) {
             if (!message.isFromUser) {
                 visibleMessages.add(ChatMessage("", false, isTyping = true))
                 delay(800)
-                visibleMessages.removeLast()
+                visibleMessages.removeAt(visibleMessages.lastIndex)
             }
 
             visibleMessages.add(message)
@@ -160,7 +160,7 @@ fun ChatBubblesOnboardingScreen(onFinished: () -> Unit) {
                 ) {
                     item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                    items(visibleMessages) { message ->
+                    itemsIndexed(visibleMessages, key = { index, _ -> index }) { _, message ->
                         AnimatedVisibility(
                             visible = true,
                             enter = fadeIn() + slideInHorizontally(
