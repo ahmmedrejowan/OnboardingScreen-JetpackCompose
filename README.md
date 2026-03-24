@@ -15,6 +15,18 @@ A showcase app featuring **32 unique onboarding screen variations** built with J
 - Clean, modular architecture
 - 100% Kotlin & Jetpack Compose
 
+## Download
+
+![GitHub Release](https://img.shields.io/github/v/release/ahmmedrejowan/OnboardingScreen-JetpackCompose)
+
+You can download the latest APK from here
+
+<a href="https://github.com/ahmmedrejowan/OnboardingScreen-JetpackCompose/releases/latest">
+<img src="https://raw.githubusercontent.com/ahmmedrejowan/OnboardingScreen-JetpackCompose/master/files/get.png" width="224px" align="center"/>
+</a>
+
+Check out the [releases](https://github.com/ahmmedrejowan/OnboardingScreen-JetpackCompose/releases) section for more details.
+
 ## Variations
 
 | # | Style | Description |

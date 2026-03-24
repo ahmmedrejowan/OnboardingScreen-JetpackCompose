@@ -1,0 +1,223 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_override:
+        description: 'Version name (leave empty to use build.gradle version)'
+        required: false
+        default: ''
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+          - release
+          - prerelease
+      release_notes:
+        description: 'Release notes'
+        required: false
+        default: 'Bug fixes and improvements'
+
+permissions:
+  contents: write
+
+jobs:
+  # Step 1: Validate version and tag
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      apk_name: ${{ steps.version.outputs.apk_name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version_override }}" ]; then
+            VERSION="${{ github.event.inputs.version_override }}"
+          else
+            VERSION=$(grep -oP 'versionName\s*=\s*"\K[^"]+' app/build.gradle.kts)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "apk_name=OnboardingScreen-JetpackCompose-v${VERSION}.apk" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version format: $VERSION (use semantic versioning X.Y.Z)"
+            exit 1
+          fi
+
+      - name: Check if tag exists
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "::error::Tag v$VERSION already exists!"
+            exit 1
+          fi
+          echo "Tag v$VERSION is available"
+
+  # Step 2: Run unit tests, lint, and build in parallel
+  unit-test:
+    name: Unit Tests
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Run Unit Tests
+        run: chmod +x gradlew && ./gradlew :app:testDebugUnitTest
+
+  lint:
+    name: Lint
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Run Lint
+        run: chmod +x gradlew && ./gradlew :app:lintRelease
+
+  build:
+    name: Build APK
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.validate.outputs.version }}
+      APK_NAME: ${{ needs.validate.outputs.apk_name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/release.keystore
+
+      - name: Build Release APK
+        env:
+          KEYSTORE_FILE: release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: chmod +x gradlew && ./gradlew :app:assembleRelease
+
+      - name: Prepare APK
+        id: apk
+        run: |
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/${{ env.APK_NAME }}
+          cd app/build/outputs/apk/release
+          sha256sum ${{ env.APK_NAME }} > ${{ env.APK_NAME }}.sha256
+          md5sum ${{ env.APK_NAME }} > ${{ env.APK_NAME }}.md5
+          SIZE=$(du -h ${{ env.APK_NAME }} | cut -f1)
+          echo "size=$SIZE" >> $GITHUB_OUTPUT
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: |
+            app/build/outputs/apk/release/${{ env.APK_NAME }}
+            app/build/outputs/apk/release/${{ env.APK_NAME }}.sha256
+            app/build/outputs/apk/release/${{ env.APK_NAME }}.md5
+          retention-days: 90
+
+      - name: Cleanup Keystore
+        if: always()
+        run: rm -f app/release.keystore
+
+    outputs:
+      apk_size: ${{ steps.apk.outputs.size }}
+
+  # Step 3: Create release only if all checks pass
+  release:
+    name: Create Release
+    needs: [validate, unit-test, lint, build]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.validate.outputs.version }}
+      APK_NAME: ${{ needs.validate.outputs.apk_name }}
+      APK_SIZE: ${{ needs.build.outputs.apk_size }}
+
+    steps:
+      - name: Download APK Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+          path: ./release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: OnboardingScreen-JetpackCompose v${{ env.VERSION }}
+          body: |
+            ## What's New
+
+            ${{ github.event.inputs.release_notes }}
+
+            ## Download
+
+            | File | Size |
+            |------|------|
+            | `${{ env.APK_NAME }}` | ${{ env.APK_SIZE }} |
+
+            ## Installation
+
+            1. Download `${{ env.APK_NAME }}` below
+            2. Enable "Install from unknown sources" if prompted
+            3. Open the APK to install
+
+            ## Verify Download (Optional)
+
+            ```bash
+            sha256sum -c ${{ env.APK_NAME }}.sha256
+            md5sum -c ${{ env.APK_NAME }}.md5
+            ```
+
+            ---
+
+            **Full Changelog:** [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/v${{ env.VERSION }}/CHANGELOG.md)
+          files: |
+            ./release/${{ env.APK_NAME }}
+            ./release/${{ env.APK_NAME }}.sha256
+            ./release/${{ env.APK_NAME }}.md5
+          draft: false
+          prerelease: ${{ github.event.inputs.release_type == 'prerelease' }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
